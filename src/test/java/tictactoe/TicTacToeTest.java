@@ -2,7 +2,7 @@ package tictactoe;
 
 import org.junit.Before;
 import org.junit.Test;
-import tictactoe.exception.BoardSizeUnavailableException;
+import tictactoe.exception.InvalidGridSizeException;
 import tictactoe.exception.InvalidPositionException;
 import tictactoe.exception.SpotUnavailableException;
 
@@ -13,22 +13,15 @@ public class TicTacToeTest {
     private TicTacToe ticTacToe;
 
     @Before
-    public void setUp() throws BoardSizeUnavailableException {
-        ticTacToe = new TicTacToe();
+    public void setUp() {
+        ticTacToe = new TicTacToe(3);
     }
 
     @Test
-    public void givenUnavailableBoardSize_whenNewGame_thenBoardUnavailableExceptionIsThrown() {
+    public void givenAnInvalidGridSize_whenNewTicTacToe_thenInvalidGridSizeExceptionIsThrown() {
         assertThatThrownBy(
-                () -> new TicTacToe(9)
-        ).isInstanceOf(BoardSizeUnavailableException.class);
-    }
-
-    @Test
-    public void givenARowIsOutsideOfBoard_whenPlay_thenRuntimeExceptionIsThrown() {
-        assertThatThrownBy(
-                () -> ticTacToe.play(5, 2)
-        ).isInstanceOf(InvalidPositionException.class);
+                () -> new TicTacToe(2)
+        ).isInstanceOf(InvalidGridSizeException.class);
     }
 
     @Test
@@ -175,4 +168,35 @@ public class TicTacToeTest {
         assertThat(ticTacToe.play(3, 3)).isEqualTo(PlayResult.DRAW); // All spots have been field, so we have a DRAW
     }
 
+    @Test
+    public void givenAnEmptyBoard_whenShow_thenIsEquals() {
+        String actualEmptyBoard = ticTacToe.getBoard().show();
+        String expectedEmptyBoard =
+                "   |   |   \n" +
+                "---|---|---\n" +
+                "   |   |   \n" +
+                "---|---|---\n" +
+                "   |   |   ";
+
+        assertThat(actualEmptyBoard).isEqualTo(expectedEmptyBoard);
+    }
+
+    @Test
+    public void givenABoard_whenShow_thenIsEquals() {
+        ticTacToe.play(1, 1);
+        ticTacToe.play(1, 2);
+        ticTacToe.play(2, 2);
+        ticTacToe.play(1, 3);
+        ticTacToe.play(3, 3);
+
+        String actualBoard = ticTacToe.getBoard().show();
+        String expectedBoard =
+                " X | O | O \n" +
+                "---|---|---\n" +
+                "   | X |   \n" +
+                "---|---|---\n" +
+                "   |   | X ";
+
+        assertThat(actualBoard).isEqualTo(expectedBoard);
+    }
 }
